@@ -1,45 +1,29 @@
-import localforage from "localforage";
 import { useCallback } from "react";
 import Button from "./Button";
+import { get, set } from "idb-keyval";
 
 function App() {
   const handleClick1 = useCallback(() => {
     const timestamp = Date.now().toString();
-    const ins = localforage.createInstance({
-      name: "localforagedemo",
-      storeName: "store1",
-      version: 1,
-    });
-    ins
-      .setItem(timestamp, timestamp)
+    set(timestamp, timestamp)
       .then(() => console.log("Store Success"))
       .catch(e => console.log(e));
   }, []);
 
   const handleClick2 = useCallback(() => {
     const timestamp = Date.now().toString();
-    const ins = localforage.createInstance({
-      name: "localforagedemo",
-      storeName: "store2",
-      version: 1,
-    });
-    ins
-      .setItem(timestamp, timestamp)
+
+    set(timestamp, timestamp)
       .then(() => console.log("Store Success"))
       .catch(e => console.log(e));
   }, []);
 
   const handleClick3 = useCallback(() => {
     const timestamp = Date.now();
-    const ins = localforage.createInstance({
-      name: "localforagedemo",
-      storeName: "store1",
-      version: 1,
-    });
 
     const promiseList = [];
     for (let i = 0; i < 500; i++) {
-      promiseList.push(ins.setItem(`${timestamp}-${i}`, timestamp));
+      promiseList.push(set(`${timestamp}-${i}`, timestamp));
     }
 
     Promise.all(promiseList)
