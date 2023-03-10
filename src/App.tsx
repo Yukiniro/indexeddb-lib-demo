@@ -1,24 +1,60 @@
-import { useState } from "react";
-import { ReactComponent as LogoSvg } from "./icon/logo.svg";
-import { ReactComponent as FaviconSvg } from "./icon/favicon.svg";
+import localforage from "localforage";
+import { useCallback } from "react";
+import Button from "./Button";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const handleClick1 = useCallback(() => {
+    const timestamp = Date.now().toString();
+    const ins = localforage.createInstance({
+      name: "localforagedemo",
+      storeName: "store1",
+      version: 1,
+    });
+    ins
+      .setItem(timestamp, timestamp)
+      .then(() => console.log("Store Success"))
+      .catch(e => console.log(e));
+  }, []);
+
+  const handleClick2 = useCallback(() => {
+    const timestamp = Date.now().toString();
+    const ins = localforage.createInstance({
+      name: "localforagedemo",
+      storeName: "store2",
+      version: 1,
+    });
+    ins
+      .setItem(timestamp, timestamp)
+      .then(() => console.log("Store Success"))
+      .catch(e => console.log(e));
+  }, []);
+
+  const handleClick3 = useCallback(() => {
+    const timestamp = Date.now();
+    const ins = localforage.createInstance({
+      name: "localforagedemo",
+      storeName: "store1",
+      version: 1,
+    });
+
+    const promiseList = [];
+    for (let i = 0; i < 500; i++) {
+      promiseList.push(ins.setItem(`${timestamp}-${i}`, timestamp));
+    }
+
+    Promise.all(promiseList)
+      .then(() => console.log("Store Success"))
+      .catch(e => console.log(e));
+  }, []);
+
   return (
     <div className="w-screen h-screen bg-gray-800 text-center flex flex-col items-center justify-center">
-      <h1 className="text-white text-20 font-mono font-600">Hello World</h1>
-      <div className="flex p-14 w-110 justify-between items-center">
-        <LogoSvg className="w-60 h-60" />
-        <FaviconSvg className="w-40 h-40" />
-      </div>
-      <p>
-        <button
-          className="cursor-pointer text-6 px-6 py-2 rounded-4 border-none"
-          onClick={() => setCount(count => count + 1)}
-        >
-          count is: {count}
-        </button>
-      </p>
+      <h1 className="text-white text-20 font-mono font-600">
+        localforage demo
+      </h1>
+      <Button onClick={handleClick1}>Store 1</Button>
+      <Button onClick={handleClick2}>Store 2</Button>
+      <Button onClick={handleClick3}>Store 1 multi</Button>
     </div>
   );
 }
